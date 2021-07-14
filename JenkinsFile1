@@ -1,0 +1,93 @@
+node('master') {
+    
+  // Get Artifactory Server Instance Details
+  def server = Artifactory.server "jfrog"
+  def buildInfo = Artifactory.newBuildInfo()
+  
+  // Project Variables
+  def project_path = "HelloWorld"
+	
+    
+    stage('Git-CheckOut') {
+      git branch: 'main', url: 'https://github.com/prankurjain/HelloWorldPipeline.git'
+    }  
+    
+  dir(project_path) {
+    
+    stage('Maven-Clean') {
+      sh ' mvn clean'
+    }
+    
+    stage('Maven-Compile') {
+      sh ' mvn compile'
+    }
+    
+    stage('Maven-Test') {
+      sh ' mvn test'
+    }
+    
+    stage('Maven-Package') {
+      sh ' mvn package'
+    }  
+	
+    	
+  //  stage('SonarQube') {
+  //    withSonarQubeEnv('jenkins-sonar') {
+  //    sh 'mvn sonar:sonar'
+  //   }
+  // }  
+
+	stage('Build Management') {
+		def uploadSpec = """{ 
+			"files": [
+			{
+			"pattern": "**/*.war",
+			"target": "helloworld-war"
+			}
+		]
+
+	}"""
+	
+	server.upload spec: uploadSpec
+   }
+   
+   
+   
+   
+
+	stage('Publish Build Info'){
+		server.publishBuildInfo buildInfo
+	}
+
+    
+    stage('Archive Artifact') {
+      archiveArtifacts artifacts: 'target/*.war', followSymlinks: false
+    }  
+
+
+   stage('Download Package') {
+   def downloadSpec = """{ 
+     "files": [
+       {
+        "pattern": "helloworld-war/*.war",
+         "target": "ansible-code/roles/helloworld/files/"
+       }
+      ]
+
+   }"""
+      server.download spec: downloadSpec
+   }
+
+  
+
+    
+  stage('Terraform Deployment'){
+     sh "cd terraform/deployment;terraform init; terraform apply --auto-approve"
+  }
+  
+    
+  }
+    
+    
+    
+}

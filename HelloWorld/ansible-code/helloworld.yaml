@@ -1,0 +1,5 @@
+- hosts: all
+  name: "Hello World Deployment"
+  become: yes
+  roles:
+  - helloworld

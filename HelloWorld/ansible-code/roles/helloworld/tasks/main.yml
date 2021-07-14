@@ -1,0 +1,23 @@
+---
+# tasks file for helloworld
+
+- name: Wildfly Home Dir
+  file: path={{doc_wildfly}}/wildfly-23.0.0.Final state=directory
+
+- name: Install Default JDK 1.8
+  apt: name=default-jdk state=present
+
+- name: Download wildfly Tarball
+  get_url: url={{download_url}} dest={{doc_wildfly}}/wildfly-23.0.0.Final.tar.gz mode=0755
+
+- name: Extract Wildfly TarBall
+  command: "tar zxf {{doc_wildfly}}/wildfly-23.0.0.Final.tar.gz -C {{doc_wildfly}}/wildfly-23.0.0.Final --strip-components 1"
+
+- name: Wildfly Deployment Dir
+  file: path={{ doc_wildfly_deployment}} state=directory
+
+- name: Deploy HelloWorld  War
+  copy: src=files/HelloWorld.war dest={{doc_wildfly_deployment}}
+
+- name: Start Wildfly App Server
+  shell: "/opt/SP/apps/wildfly-23.0.0.Final/bin/standalone.sh"

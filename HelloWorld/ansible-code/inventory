@@ -1,0 +1,15 @@
+
+[db]
+10.0.2.15
+
+
+[prod]
+10.0.2.14
+
+[dc:children]
+db
+prod
+
+[dc:vars]
+ansible_ssh_user=root
+ansible_ssh_pass=prankur@254

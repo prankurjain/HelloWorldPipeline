@@ -1,0 +1,6 @@
+---
+# vars file for helloworld
+
+download_url: "https://download.jboss.org/wildfly/23.0.0.Final/wildfly-23.0.0.Final.tar.gz"
+doc_wildfly: "/opt/SP/apps"
+doc_wildfly_deployment: "/opt/SP/apps/wildfly-23.0.0.Final/standalone/deployments"

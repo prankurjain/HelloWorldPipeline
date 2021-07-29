@@ -42,7 +42,7 @@ node('master') {
 			"files": [
 			{
 			"pattern": "**/*.war",
-			"target": "helloworld-war"
+			"target": "hello-world-libs-snapshot/"
 			}
 		]
 
